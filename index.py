@@ -5,7 +5,7 @@ from tkinter import messagebox
 class CodeEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("Code Editor")
+        self.root.title("Ruu3f/text-editor [STAR ON GITHUB!]")
         self.linenumbers = tk.Text(
             self.root,
             width=3,
