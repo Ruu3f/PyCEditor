@@ -5,7 +5,7 @@ from tkinter import messagebox, filedialog
 class PyEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("PyEditor [STAR ON GITHUB!]")
+        self.root.title("PyEditor - Beta")
 
         self.menu_bar = tk.Menu(root)
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
