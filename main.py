@@ -1,11 +1,27 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 
 
-class CodeEditor:
+class PyEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("Ruu3f/text-editor [STAR ON GITHUB!]")
+        self.root.title("PyEditor [STAR ON GITHUB!]")
+
+        self.menu_bar = tk.Menu(root)
+        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.file_menu.add_command(label="Open", command=self.open_file)
+        self.file_menu.add_command(label="Save", command=self.save_file)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Exit", command=self.root.destroy)
+        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
+
+        self.about_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.about_menu.add_command(label="About", command=self.show_about)
+        self.about_menu.add_command(label="Source Code", command=self.open_source_code)
+        self.menu_bar.add_cascade(label="About", menu=self.about_menu)
+
+        self.root.config(menu=self.menu_bar)
+
         self.linenumbers = tk.Text(
             self.root,
             width=3,
@@ -59,7 +75,7 @@ class CodeEditor:
         if int(lines) > 999:
             messagebox.showerror(
                 "Error",
-                "Maximum number of lines exceeded. Why do you even need that much lines my guy?",
+                "Maximum number of lines exceeded. Why do you even need that many lines, my guy?",
             )
             self.text_widget.delete("999.0", tk.END)
             lines = "999"
@@ -73,7 +89,50 @@ class CodeEditor:
         if self.update_linenumbers_id is None:
             self.update_linenumbers_id = self.root.after_idle(self.update_linenumbers)
 
+    def open_file(self):
+        file_types = [
+            ("Python Files", "*.py"),
+            ("YAML Files", "*.yaml"),
+            ("JSON Files", "*.json"),
+            ("Text Files", "*.txt"),
+            ("All Files", "*.*"),
+        ]
+        file_path = filedialog.askopenfilename(filetypes=file_types)
+        if file_path:
+            with open(file_path, "r") as file:
+                content = file.read()
+                self.text_widget.delete("1.0", tk.END)
+                self.text_widget.insert(tk.END, content)
+
+    def save_file(self):
+        file_types = [
+            ("Python Files", "*.py"),
+            ("YAML Files", "*.yaml"),
+            ("JSON Files", "*.json"),
+            ("Text Files", "*.txt"),
+            ("All Files", "*.*"),
+        ]
+        file_path = filedialog.asksaveasfilename(filetypes=file_types)
+        if file_path:
+            with open(file_path, "w") as file:
+                content = self.text_widget.get("1.0", tk.END)
+                file.write(content)
+
+    def run(self):
+        messagebox.showinfo("Run", "Running Python code...")
+
+    def show_about(self):
+        messagebox.showinfo(
+            "About",
+            "PyEditor v1.0\nA simple text editor for Python, YAML, JSON, and Text files.",
+        )
+
+    def open_source_code(self):
+        import webbrowser
+
+        webbrowser.open("https://github.com/Ruu3f/text-editor")
+
 
 root = tk.Tk()
-app = CodeEditor(root)
+app = PyEditor(root)
 root.mainloop()
