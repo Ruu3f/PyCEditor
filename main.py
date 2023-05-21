@@ -1,13 +1,17 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog
+from tkcode import CodeEditor
 
 
 class PyEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("PyEditor - Beta")
+        self.root.title("PyCEdit - Beta")
+        self.create_menu_bar()
+        self.create_text_widgets()
 
-        self.menu_bar = tk.Menu(root)
+    def create_menu_bar(self):
+        self.menu_bar = tk.Menu(self.root)
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.file_menu.add_command(label="Open", command=self.open_file)
         self.file_menu.add_command(label="Save", command=self.save_file)
@@ -22,6 +26,7 @@ class PyEditor:
 
         self.root.config(menu=self.menu_bar)
 
+    def create_text_widgets(self):
         self.linenumbers = tk.Text(
             self.root,
             width=3,
@@ -34,12 +39,20 @@ class PyEditor:
             state="disabled",
         )
         self.linenumbers.pack(side=tk.LEFT, fill=tk.Y)
-        self.text_widget = tk.Text(
+
+        self.text_widget = CodeEditor(
             self.root,
-            font=("Bahnschrift", 12),
-            bg="#2f3136",
-            fg="white",
-            insertbackground="white",
+            width=100,
+            height=30,
+            language="python",
+            background="black",
+            highlighter="dracula",
+            font="Consolas",
+            autofocus=True,
+            blockcursor=False,
+            insertofftime=0,
+            padx=10,
+            pady=10,
         )
         self.text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.text_widget["yscrollcommand"], self.linenumbers["yscrollcommand"] = (
@@ -92,17 +105,26 @@ class PyEditor:
     def open_file(self):
         file_types = [
             ("Python Files", "*.py"),
-            ("YAML Files", "*.yaml"),
+            ("YAML Files", "*.yaml;*.yml"),
             ("JSON Files", "*.json"),
             ("Text Files", "*.txt"),
             ("All Files", "*.*"),
         ]
         file_path = filedialog.askopenfilename(filetypes=file_types)
         if file_path:
-            with open(file_path, "r") as file:
-                content = file.read()
-                self.text_widget.delete("1.0", tk.END)
-                self.text_widget.insert(tk.END, content)
+            extension = file_path.split(".")[-1]
+            supported_extensions = ["py", "yaml", "yml", "json", "txt"]
+            if extension not in supported_extensions:
+                if messagebox.askyesno("Unsupported File Type", "This file type is unsupported. Do you want to open it anyway?"):
+                    with open(file_path, "r") as file:
+                        content = file.read()
+                        self.text_widget.delete("1.0", tk.END)
+                        self.text_widget.insert(tk.END, content)
+            else:
+                with open(file_path, "r") as file:
+                    content = file.read()
+                    self.text_widget.delete("1.0", tk.END)
+                    self.text_widget.insert(tk.END, content)
 
     def save_file(self):
         file_types = [
@@ -130,7 +152,7 @@ class PyEditor:
     def open_source_code(self):
         import webbrowser
 
-        webbrowser.open("https://github.com/Ruu3f/text-editor")
+        webbrowser.open("https://github.com/Ruu3f/PyCEdit")
 
 
 root = tk.Tk()
