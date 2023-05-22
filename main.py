@@ -6,7 +6,7 @@ from tkcode import CodeEditor
 class PyEditor:
     def __init__(self, root):
         self.root = root
-        self.root.title("PyCEdit - Beta")
+        self.root.title("PyCEditor - Beta")
         self.create_menu_bar()
         self.create_text_widgets()
 
