@@ -115,7 +115,10 @@ class PyEditor:
             extension = file_path.split(".")[-1]
             supported_extensions = ["py", "yaml", "yml", "json", "txt"]
             if extension not in supported_extensions:
-                if messagebox.askyesno("Unsupported File Type", "This file type is unsupported. Do you want to open it anyway?"):
+                if messagebox.askyesno(
+                    "Unsupported File Type",
+                    "This file type is unsupported. Do you want to open it anyway?",
+                ):
                     with open(file_path, "r") as file:
                         content = file.read()
                         self.text_widget.delete("1.0", tk.END)
