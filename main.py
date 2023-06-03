@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from tkcode import CodeEditor
@@ -18,12 +19,11 @@ class PyEditor:
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.root.destroy)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
-
         self.about_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.about_menu.add_command(label="About", command=self.show_about)
         self.about_menu.add_command(label="Source Code", command=self.open_source_code)
         self.menu_bar.add_cascade(label="About", menu=self.about_menu)
-
+        self.menu_bar.add_command(label="Console", command=self.open_console)
         self.root.config(menu=self.menu_bar)
 
     def create_text_widgets(self):
@@ -39,7 +39,6 @@ class PyEditor:
             state="disabled",
         )
         self.linenumbers.pack(side=tk.LEFT, fill=tk.Y)
-
         self.text_widget = CodeEditor(
             self.root,
             width=100,
@@ -85,13 +84,10 @@ class PyEditor:
         self.linenumbers.config(state="normal")
         self.linenumbers.delete("1.0", tk.END)
         lines = self.text_widget.index("end-1c").split(".")[0]
-        if int(lines) > 999:
-            messagebox.showerror(
-                "Error",
-                "Maximum number of lines exceeded. Why do you even need that many lines, my guy?",
-            )
-            self.text_widget.delete("999.0", tk.END)
-            lines = "999"
+        if int(lines) > 9999:
+            messagebox.showerror("Error", "Maximum number of lines exceeded.")
+            self.text_widget.delete("9999.0", tk.END)
+            lines = "9999"
         self.linenumbers.insert(
             "1.0", "\n".join(str(i) for i in range(1, int(lines) + 1))
         )
@@ -117,7 +113,7 @@ class PyEditor:
             if extension not in supported_extensions:
                 if messagebox.askyesno(
                     "Unsupported File Type",
-                    "This file type is unsupported. Do you want to open it anyway?",
+                    "This will not work with syntax highlighting. Do you want to open it anyways?",
                 ):
                     with open(file_path, "r") as file:
                         content = file.read()
@@ -143,21 +139,24 @@ class PyEditor:
                 content = self.text_widget.get("1.0", tk.END)
                 file.write(content)
 
-    def run(self):
-        messagebox.showinfo("Run", "Running Python code...")
-
     def show_about(self):
         messagebox.showinfo(
             "About",
-            "PyEditor v1.0\nA simple text editor for Python, YAML, JSON, and Text files.",
+            "PyEditor v1.3\nA simple text editor for Python, YAML, JSON, and Text files.",
         )
 
     def open_source_code(self):
         import webbrowser
 
-        webbrowser.open("https://github.com/Ruu3f/PyCEdit")
+        webbrowser.open("https://github.com/Ruu3f/PyCEditor")
+
+    def open_console(self):
+        os.system("start cmd.exe")
+
+    def mainloop(self):
+        self.root.mainloop()
 
 
 root = tk.Tk()
 app = PyEditor(root)
-root.mainloop()
+app.mainloop()
