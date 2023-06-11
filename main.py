@@ -1,13 +1,13 @@
-import os
+import os, webbrowser
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from tkcode import CodeEditor
 
 
-class PyEditor:
+class PyEdit:
     def __init__(self, root):
         self.root = root
-        self.root.title("PyCEditor - Beta")
+        self.root.title("PyCEdit - Beta")
         self.create_menu_bar()
         self.create_text_widgets()
 
@@ -19,11 +19,11 @@ class PyEditor:
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.root.destroy)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
+        self.menu_bar.add_command(label="Terminal", command=self.open_terminal)
         self.about_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.about_menu.add_command(label="About", command=self.show_about)
         self.about_menu.add_command(label="Source Code", command=self.open_source_code)
         self.menu_bar.add_cascade(label="About", menu=self.about_menu)
-        self.menu_bar.add_command(label="Console", command=self.open_console)
         self.root.config(menu=self.menu_bar)
 
     def create_text_widgets(self):
@@ -62,20 +62,16 @@ class PyEditor:
         self.text_widget.bind("<Key>", self.schedule_update_linenumbers)
         self.text_widget.bind("<MouseWheel>", self.scroll)
         self.linenumbers.bind("<MouseWheel>", self.scroll)
-        self.update_linenumbers_id = None
 
     def scroll(self, event):
-        current_position = self.text_widget.yview()[0]
-        self.linenumbers.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        self.text_widget.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        if current_position == 1.0 and event.delta < 0:
-            self.linenumbers.yview_scroll(1, "units")
-            self.text_widget.yview_scroll(1, "units")
+        delta_units = int(-1 * (event.delta / 120))
+        self.linenumbers.yview_scroll(delta_units, "units")
+        self.text_widget.yview_scroll(delta_units, "units")
 
     def scroll_y(self, *args):
         current_position = self.text_widget.yview()[0]
-        self.text_widget.yview("moveto", args[0])
-        self.linenumbers.yview("moveto", args[0])
+        self.text_widget.yview_moveto(args[0])
+        self.linenumbers.yview_moveto(args[0])
         if current_position == 1.0 and float(args[0]) < 1.0:
             self.linenumbers.yview_scroll(1, "units")
             self.text_widget.yview_scroll(1, "units")
@@ -95,7 +91,10 @@ class PyEditor:
         self.update_linenumbers_id = None
 
     def schedule_update_linenumbers(self, *args):
-        if self.update_linenumbers_id is None:
+        if (
+            not hasattr(self, "update_linenumbers_id")
+            or self.update_linenumbers_id is None
+        ):
             self.update_linenumbers_id = self.root.after_idle(self.update_linenumbers)
 
     def open_file(self):
@@ -142,21 +141,20 @@ class PyEditor:
     def show_about(self):
         messagebox.showinfo(
             "About",
-            "PyEditor v1.3\nA simple text editor for Python, YAML, JSON, and Text files.",
+            "PyEditor v1.4\nA simple text editor for Python, YAML, JSON, and Text files.",
         )
 
     def open_source_code(self):
-        import webbrowser
+        webbrowser.open("https://github.com/Ruu3f/PyCEdit")
 
-        webbrowser.open("https://github.com/Ruu3f/PyCEditor")
-
-    def open_console(self):
-        os.system("start cmd.exe")
+    def open_terminal(self):
+        os.system("start powershell.exe")
 
     def mainloop(self):
         self.root.mainloop()
 
 
-root = tk.Tk()
-app = PyEditor(root)
-app.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PyEdit(root)
+    app.mainloop()
