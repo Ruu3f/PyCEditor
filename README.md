@@ -10,3 +10,10 @@ pip install -r requirements.txt
 py main.py
 ```
 #### Result: The code should now work and open a GUI.
+
+## Support this repository:
+
+- Star this repository :D
+- Join my [Discord Server](https://discord.gg/XH6pUGkwRr):
+
+[![DiscordWidget](https://discordapp.com/api/guilds/1120833966035976273/widget.png?style=banner2)](https://discord.gg/XH6pUGkwRr)
